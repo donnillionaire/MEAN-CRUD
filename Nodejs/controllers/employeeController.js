@@ -2,6 +2,9 @@
 const express = require ("express")
 var router = express.Router()
 
+/*Requesting a valid ID from mongodb*/
+var ObjectId = require ('mongoose').Types.ObjectId
+
 /*Request statement from employee model*/
 var {Employee} = require ('../models/employee')
 
@@ -15,7 +18,16 @@ router.get('/', (req, res)=>{
       })
   })
 
+//get request to get users with specific _Id
+router.get ('/:id', (req, res)=>{
+if (!ObjectId.isValid(req.params.id))
+return  res.status(400).send(`No record with that id: ${req.prams.id}`)
 
+Employee.findById(req.params.id, (err, doc)=>{
+  if(!err) {res.send(doc)}
+  else{console.log('Error Retriveing employee data')}
+})
+})
 
 router.post('/', (req, res)=>{
 //emp is the mongoose object filled with employees details
